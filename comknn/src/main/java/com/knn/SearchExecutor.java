@@ -5,38 +5,29 @@ import com.knn.search.LinearSearch;
 import com.knn.vectors.OriginalInputVector;
 import com.knn.vectors.Vector;
 import com.knn.vectors.VectorArray;
-import com.knn.vectors.VectorGenerator;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SearchExecutor {
 
-    static String K = Constants.K;
-    static String C = Constants.C;
-    static String d = Constants.d;
-    static String D = Constants.D;
-    static String L = Constants.L;
 
     static String hammVecObjPath = "hammingVector.obj";
 
+
     public  static  void main(String argsv[]) throws IOException {
 
-        var args = new String[]{"query_file", "3", "2"};
+        Constants.InitializeVariables(argsv);
 
-         var queryFile = args[0];
-           K = args[1];
-         var C = args[2];
+        var inputVectors =  OriginalInputVector.getInstance(Constants.inputFile);
 
+        var queries = FileOperations.readDoubleArray(Constants.queryFile);
 
-         var inputVectors =  OriginalInputVector.getInstance("input_file");
+        var knnSearchResult = TopknnSearch(queries,inputVectors, Constants.K, Constants.C);
 
-        var queries = FileOperations.readDoubleArray(queryFile);
-
-         var knnSearchResult = TopknnSearch(queries,inputVectors, K, C);
-
-         var linearSearchResult = TopkLinearSearch(queries, Integer.parseInt(K));
+        var linearSearchResult = TopkLinearSearch(queries, Constants.K);
 
          GenerateReport(queries,knnSearchResult,linearSearchResult);
 
@@ -61,7 +52,7 @@ public class SearchExecutor {
 
         }
 
-        System.out.println(String.format("recall rate %s ", Math.abs ((count  * 200)/((Integer.parseInt(K))* knnSearchResult.size()))));
+        System.out.println(String.format("recall rate %s ", Math.abs ((count  * 200)/(((Constants.K))* knnSearchResult.size()))));
     }
 
     private static  HashMap<Integer, Collection<Integer>> TopkLinearSearch(VectorArray queries,Integer k) {
@@ -79,11 +70,13 @@ public class SearchExecutor {
     }
 
     private static HashMap<Integer, Collection<Integer>> TopknnSearch(VectorArray queries, VectorArray inputVectors,
-                                                                      String k, String c) throws IOException {
+                                                                      Integer k, Integer c) throws IOException {
 
         HashMap<Integer,Collection<Integer>> queryResult = new HashMap<>();
 
-        var knn = new KnnSearch(hammVecObjPath,d, D, L,c, k);
+        var knn = new KnnSearch(hammVecObjPath,
+                Constants.d.toString(), Constants.D.toString(),
+                Constants.L.toString(),c.toString(), k.toString());
 
 
         int qIndex=0;
@@ -92,16 +85,8 @@ public class SearchExecutor {
         for(Vector query : queries.Vectors) {
             System.out.println("running knn search query "+ qIndex);
             var res = knn.Search(query);
-
-
-
-            //res.forEach(x-> System.out.println(String.format(" for query %s matched value %s",query,x)));
-            //System.out.println();
-
-            queryResult.put(qIndex++,res);
+            queryResult.put(qIndex++, (Collection<Integer>) res);
         }
-
-
 
         return queryResult;
     }

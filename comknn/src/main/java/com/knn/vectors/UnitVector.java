@@ -32,9 +32,6 @@ class UnitVector extends Vector implements Serializable {
 
     public static double getRandomIntegerBetweenRange(double min, double max){
         double x = (Math.random()*((max-min)+1))+min;
-
-       // System.out.println(x);
-
         return x;
     }
 

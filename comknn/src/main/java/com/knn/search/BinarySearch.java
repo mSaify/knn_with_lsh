@@ -9,14 +9,11 @@ public class BinarySearch {
     public static SortedMap<HammingSpaceVector,Integer> GetMatchedIndex(HammingSpaceVector query,
                                                 SortedMap<HammingSpaceVector,Integer> indexVectorMap, int C) {
 
-        HammingSpaceVector[] x = new HammingSpaceVector[indexVectorMap.size()];
-
-        var indexVector = indexVectorMap.keySet().toArray(x);
+        HammingSpaceVector[] hammingSpaceVectors = new HammingSpaceVector[indexVectorMap.size()];
+        var indexVector = indexVectorMap.keySet().toArray(hammingSpaceVectors);
 
         Integer pos = BinarySearch(query, indexVector, 0, indexVector.length - 1);
-
         SortedMap<HammingSpaceVector, Integer> finalSortedResult = new TreeMap<>();
-
         HammingSpaceVector filteredVec = indexVector[pos];
 
         var forward = 0;
@@ -54,17 +51,10 @@ public class BinarySearch {
 
         var mid = (start+end)/2;
 
-//        System.out.println(String.format("mid value in execution 1  %s",mid));
-//
-//        System.out.println(String.format("query  %s",query));
-//
-//        System.out.println(String.format("mid value  %s",indexVector[mid]));
-
         if(query.equals(indexVector[mid]) || (start>=end) )
             return mid;
 
         else if (query.compareTo(indexVector[mid]) < 0) {
-           // System.out.println("query is smaller");
             return BinarySearch(query, indexVector, start, mid - 1);
         }
         else

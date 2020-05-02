@@ -1,0 +1,8 @@
+.idea/*
+.vscode/
+.settings/*
+**/.idea/*
+comknn/target
+*.obj
+reports
+comknn/.settings

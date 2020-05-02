@@ -1,0 +1,1 @@
+java -cp com.knn-1.0.jar com.knn.Indexer ${0} ${1} ${2} ${3} ${4}
